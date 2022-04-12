@@ -2,6 +2,7 @@ from pytrends.request import TrendReq
 import pandas as pd
 import numpy as np
 import datetime
+import json
 
 #Builds gets the database from Google Trends
 def dataFrameCreator(keyWord,timeChecked): #timeframes: #-m, #-d, #-y, #-h
@@ -11,7 +12,7 @@ def dataFrameCreator(keyWord,timeChecked): #timeframes: #-m, #-d, #-y, #-h
     searchDataFrame=pytrends.interest_over_time()
     return searchDataFrame
 
-    #Outputs the average value of dataframe values.
+#Outputs the average value of dataframe values.
 def dataFrameCalculator(searchDataFrame):
     meanDataFrame=np.mean(searchDataFrame)
     lastDataDivided=searchDataFrame.div(meanDataFrame)
@@ -60,10 +61,33 @@ def userPrompt():
     timeInputDay=int(timeInputDay)
     timeChecked=str('today '+str(timeInputDay)+'-'+str(dayOrWeek))
 
+#Creates the config file
+def createConfig():
+    global coinList
+    try:
+        with open('trendsTrackerConfig.json','r') as reading:
+            inputData=json.load(reading)
+        coinList=inputData['key1']
+        print("Config file has the following coins.\n")
+        print(coinList,"\n")
+    except:
+        configCreate={"key1":["Input1","Input2","Input3"]}
+        with open('trendsTrackerConfig.json','w') as configJson:
+            json.dump(configCreate, configJson)
+        print("Config file has been created. Please adjust the file before running the program.\n")
+    return coinList
+
+
+createConfig()
+
 
 #Keywords to check
-checkKeywordList=["SRM","CHZ","SXP","PORT","SBR","AAVE","MINA","FTT","QRC","Strax","OGN","WAXP","ENJ","MANA"]
+#checkKeywordList=["SRM","CHZ","SXP","PORT","SBR","AAVE","MINA","FTT","QRC","Strax","OGN","WAXP","ENJ","MANA"]
 #checkKeywordList=["FTT"]   #Use this to check a single keyword.
+
+#Gets the keywords to check from config file
+checkKeywordList=coinList
+
 
 timeChecked='today 3-m'
 
